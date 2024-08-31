@@ -17,7 +17,7 @@ export default function FinanceRecordTable({transactionList}: FinanceRecordTable
                 </tr>
             </thead>
             <tbody>
-                {transactionList.map(record => <tr>
+                {transactionList.map(record => <tr key={record.uuid}>
                     <td>{record.date.toDateString()}</td>
                     <td>{record.description}</td>
                     <td>{record.amount.toPrecision(2)}</td>
