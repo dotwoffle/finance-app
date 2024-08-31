@@ -1,21 +1,10 @@
-import Decimal from "decimal.js";
+import FinanceRecord from "../model/FinanceRecord";
 
-const testRecordList = [
-    {
-        date: new Date(2024, 1, 1),
-        description: "A transaction",
-        amount: new Decimal(1.23),
-        category: "Other"
-    },
-    {
-        date: new Date(2024, 1, 2),
-        description: "Another transaction",
-        amount: new Decimal(5.87),
-        category: "Other"
-    },
-];
+interface FinanceRecordTableProps {
+    transactionList: FinanceRecord[];
+}
 
-export default function FinanceRecordTable(): JSX.Element {
+export default function FinanceRecordTable({transactionList}: FinanceRecordTableProps): JSX.Element {
     
     return (
         <table>
@@ -28,7 +17,7 @@ export default function FinanceRecordTable(): JSX.Element {
                 </tr>
             </thead>
             <tbody>
-                {testRecordList.map(record => <tr>
+                {transactionList.map(record => <tr>
                     <td>{record.date.toDateString()}</td>
                     <td>{record.description}</td>
                     <td>{record.amount.toPrecision(2)}</td>

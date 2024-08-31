@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import './components/FinanceRecordTable'
-import FinanceRecordTable from './components/FinanceRecordTable'
+import './components/FinanceRecordCreator'
+import RecordsController from './components/RecordsController'
 
 function App() {
 
-  return <FinanceRecordTable/>
+    return (
+        <RecordsController/>
+    );
 
   // const [count, setCount] = useState(0)
 
