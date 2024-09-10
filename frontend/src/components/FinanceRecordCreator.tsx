@@ -47,7 +47,10 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
         }}>
             <label htmlFor="date">Date</label>
             <input required ref={dateInputRef} type="date" name="date" id="date" onChange={
-                (event) => setDate(new Date(event.target.value))
+                (event) => {
+                    const [year, month, day] = event.target.value.split("-").map(Number);
+                    setDate(new Date(year, month-1, day));
+                }
             }/>
             <label htmlFor="description">Description</label>
             <input required ref={descriptionInputRef} type="text" name="description" id="description" onChange={
