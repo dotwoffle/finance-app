@@ -2,7 +2,7 @@ import { useState } from "react"
 import FinanceRecordCreator from "./FinanceRecordCreator";
 import FinanceRecordTable from "./FinanceRecordTable";
 import FinanceRecord from "../model/FinanceRecord";
-
+import MonthSummary from "./MonthSummary";
 
 export default function RecordsController(): JSX.Element {
 
@@ -22,6 +22,7 @@ export default function RecordsController(): JSX.Element {
         <>
             <FinanceRecordCreator submitHandler={handleFormSubmit}/>
             <FinanceRecordTable transactionList={transactionList}/>
+            <MonthSummary/>
         </>
     );
 
