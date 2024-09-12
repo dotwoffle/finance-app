@@ -16,6 +16,10 @@ public class ApiRestController {
 
     private final Collection<FinanceRecord> FAKE_DATABASE = new ArrayList<>();
 
+    /**Generates a (optionally sorted) list of filtered finance records from the database.
+     * @param queryString The query string passed into the request URL. This can be turned into a
+     * {@link com.dotwoffle.api.model.FinanceRecordQuery FinanceRecordQuery} object.
+     * @return A list of all records from the database matching the query.*/
     @GetMapping("/api/get-records")
     private Collection<FinanceRecord> getRecords(@RequestParam(name="q") String queryString) {
         System.out.println("Query: " + queryString);
@@ -26,9 +30,7 @@ public class ApiRestController {
 
     @PostMapping("/api/create-record")
     private void postRecord(@RequestBody FinanceRecord financeRecord) {
-        System.out.println("date: " + financeRecord.date());
-        System.out.println("amount: " + financeRecord.amount());
-        System.out.println("description: " + financeRecord.description());
+        System.out.println(financeRecord);
         FAKE_DATABASE.add(financeRecord);
     }
 
