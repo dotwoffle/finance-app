@@ -27,10 +27,35 @@ public class FinanceRecordQuery {
 
     }
 
+    public BigDecimal getLowerAmountBound() {
+        return lowerAmountBound;
+    }
+
+    public BigDecimal getUpperAmountBound() {
+        return upperAmountBound;
+    }
+
+    public LocalDate getLowerDateBound() {
+        return lowerDateBound;
+    }
+
+    public LocalDate getUpperDateBound() {
+        return upperDateBound;
+    }
+
+    public Collection<FinanceRecord.Type> getAllowedTypes() {
+        return allowedTypes;
+    }
+
+    public Collection<FinanceRecord.Category> getAllowedCategories() {
+        return allowedCategories;
+    }
+
     private static final String AMOUNT_PARAM_NAME = "amount";
     private static final String DATE_PARAM_NAME = "date";
     private static final String ALLOWED_TYPES_PARAM_NAME = "allowedTypes";
     private static final String ALLOWED_CATEGORIES_PARAM_NAME = "allowedCategories";
+
     /**A lower bound on monetary amount.*/
     private BigDecimal lowerAmountBound = null;
     /**An upper bound on monetary amount.*/
@@ -67,7 +92,7 @@ public class FinanceRecordQuery {
 
     private void processAmountParam(String queryParam) throws MalformedQueryException {
 
-        String queryParamCopy = queryParam.substring(1);
+        String queryParamCopy = queryParam.substring(AMOUNT_PARAM_NAME.length());
 
         if(queryParamCopy.startsWith("<")) {
 
@@ -127,7 +152,7 @@ public class FinanceRecordQuery {
 
     private void processDateParam(String queryParam) throws MalformedQueryException {
 
-        String queryParamCopy = queryParam.substring(1);
+        String queryParamCopy = queryParam.substring(DATE_PARAM_NAME.length());
 
         if(queryParamCopy.startsWith("<")) {
 
@@ -142,7 +167,7 @@ public class FinanceRecordQuery {
                     upperDateBound = LocalDate.parse(queryParamCopy.substring(1));
                 }
                 else {
-                    upperDateBound = LocalDate.parse(queryParamCopy.substring(1)).minusDays(1);
+                    upperDateBound = LocalDate.parse(queryParamCopy).minusDays(1);
                 }
             }
             catch(NumberFormatException e) {
@@ -167,7 +192,7 @@ public class FinanceRecordQuery {
                     lowerDateBound = LocalDate.parse(queryParamCopy.substring(1));
                 }
                 else {
-                    lowerDateBound = LocalDate.parse(queryParamCopy.substring(1)).plusDays(1);
+                    lowerDateBound = LocalDate.parse(queryParamCopy).plusDays(1);
                 }
             }
             catch(NumberFormatException e) {
@@ -191,7 +216,14 @@ public class FinanceRecordQuery {
             throw new MalformedQueryException(ALLOWED_TYPES_PARAM_NAME, "Query already specified allowed types list");
         }
 
-        String queryParamCopy = queryParam.substring(1);
+        String queryParamCopy = queryParam.substring(ALLOWED_TYPES_PARAM_NAME.length());
+
+        if(!queryParamCopy.startsWith("=")) {
+            throw new MalformedQueryException(ALLOWED_TYPES_PARAM_NAME, "Missing \"=\" in " + queryParam);
+        }
+
+        queryParamCopy = queryParamCopy.substring(1);
+
         allowedTypes = new ArrayList<>();
 
         for(String allowedType : queryParamCopy.split(",")) {
@@ -211,7 +243,14 @@ public class FinanceRecordQuery {
             throw new MalformedQueryException(ALLOWED_CATEGORIES_PARAM_NAME, "Query already specified allowed categories list");
         }
 
-        String queryParamCopy = queryParam.substring(1);
+        String queryParamCopy = queryParam.substring(ALLOWED_CATEGORIES_PARAM_NAME.length());
+
+        if(!queryParamCopy.startsWith("=")) {
+            throw new MalformedQueryException(ALLOWED_CATEGORIES_PARAM_NAME, "Missing \"=\" in " + queryParam);
+        }
+
+        queryParamCopy = queryParamCopy.substring(1);
+
         allowedCategories = new ArrayList<>();
 
         for(String allowedCategory : queryParamCopy.split(",")) {
