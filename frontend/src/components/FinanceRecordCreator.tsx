@@ -19,7 +19,7 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
     const categoryInputRef = useRef<HTMLInputElement>(null);
 
     return (
-
+        
         <form onSubmit={(event) => {
 
             event.preventDefault();
