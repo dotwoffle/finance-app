@@ -27,42 +27,52 @@ public class FinanceRecordQuery {
 
     }
 
+    /**@return The (possibly null) lower bound on amount, inclusive.*/
     public BigDecimal getLowerAmountBound() {
         return lowerAmountBound;
     }
 
+    /**@return The (possibly null) upper bound on amount, inclusive.*/
     public BigDecimal getUpperAmountBound() {
         return upperAmountBound;
     }
 
+    /**@return The (possibly null) lower bound on date, inclusive.*/
     public LocalDate getLowerDateBound() {
         return lowerDateBound;
     }
 
+    /**@return The (possibly null) upper bound on date, inclusive.*/
     public LocalDate getUpperDateBound() {
         return upperDateBound;
     }
 
+    /**@return The (possibly null) list of allowed transaction types.*/
     public Collection<FinanceRecord.Type> getAllowedTypes() {
         return allowedTypes;
     }
 
+    /**@return The (possibly null) list of allowed transaction categories.*/
     public Collection<FinanceRecord.Category> getAllowedCategories() {
         return allowedCategories;
     }
 
+    /**The name of the amount query parameter.*/
     private static final String AMOUNT_PARAM_NAME = "amount";
+    /**The name of the date query parameter.*/
     private static final String DATE_PARAM_NAME = "date";
+    /**The name of the allowed types query parameter.*/
     private static final String ALLOWED_TYPES_PARAM_NAME = "allowedTypes";
+    /**The name of the allowed categories query parameter.*/
     private static final String ALLOWED_CATEGORIES_PARAM_NAME = "allowedCategories";
 
-    /**A lower bound on monetary amount.*/
+    /**A lower bound on monetary amount, inclusive.*/
     private BigDecimal lowerAmountBound = null;
-    /**An upper bound on monetary amount.*/
+    /**An upper bound on monetary amount, inclusive.*/
     private BigDecimal upperAmountBound = null;
-    /**A lower bound on transaction date.*/
+    /**A lower bound on transaction date, inclusive.*/
     private LocalDate lowerDateBound = null;
-    /**An upper bound on transaction date.*/
+    /**An upper bound on transaction date, inclusive.*/
     private LocalDate upperDateBound = null;
     /**A list of transaction types that are allowed by the filter.*/
     private Collection<FinanceRecord.Type> allowedTypes = null;
@@ -107,7 +117,7 @@ public class FinanceRecordQuery {
                     upperAmountBound = new BigDecimal(queryParamCopy.substring(1));
                 }
                 else {
-                    upperAmountBound = new BigDecimal(queryParamCopy).add(BigDecimal.valueOf(0.01));
+                    upperAmountBound = new BigDecimal(queryParamCopy).subtract(BigDecimal.valueOf(0.01));
                 }
             }
             catch(NumberFormatException e) {
@@ -139,7 +149,7 @@ public class FinanceRecordQuery {
                 throw new MalformedQueryException(AMOUNT_PARAM_NAME, queryParamCopy + "is not a valid value for " + AMOUNT_PARAM_NAME);
             }
 
-            if(upperAmountBound != null && upperAmountBound.compareTo(lowerAmountBound) > 0) {
+            if(upperAmountBound != null && upperAmountBound.compareTo(lowerAmountBound) < 0) {
                 throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Lower bound for amount contradicts the previously set upper bound of " + lowerAmountBound);
             }
 

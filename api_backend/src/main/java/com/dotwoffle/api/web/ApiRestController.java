@@ -83,16 +83,16 @@ public class ApiRestController {
         Stream<FinanceRecord> dbStream = FAKE_DATABASE.stream();
 
         if(query.getLowerAmountBound() != null) {
-            dbStream = dbStream.filter(record -> record.amount().compareTo(query.getLowerAmountBound()) > 0);
+            dbStream = dbStream.filter(record -> record.amount().compareTo(query.getLowerAmountBound()) >= 0);
         }
         if(query.getUpperAmountBound() != null) {
-            dbStream = dbStream.filter(record -> record.amount().compareTo(query.getUpperAmountBound()) < 0);
+            dbStream = dbStream.filter(record -> record.amount().compareTo(query.getUpperAmountBound()) <= 0);
         }
         if(query.getLowerDateBound() != null) {
-            dbStream = dbStream.filter(record -> record.date().isAfter(query.getLowerDateBound()));
+            dbStream = dbStream.filter(record -> !record.date().isBefore(query.getLowerDateBound()));
         }
         if(query.getUpperDateBound() != null) {
-            dbStream = dbStream.filter(record -> record.date().isBefore(query.getUpperDateBound()));
+            dbStream = dbStream.filter(record -> !record.date().isAfter(query.getUpperDateBound()));
         }
         if(query.getAllowedTypes() != null) {
             dbStream = dbStream.filter(record -> query.getAllowedTypes().contains(record.type()));
