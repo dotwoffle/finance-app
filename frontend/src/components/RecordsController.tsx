@@ -26,6 +26,22 @@ export default function RecordsController(): JSX.Element {
         updatedTransactionList.push(newTransaction);
         setTransactionList(updatedTransactionList);
 
+        fetch(`${API_ENDPOINT}/create-record`, {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                uuid: newTransaction.uuid,
+                date: newTransaction.date.toISOString(),
+                description: newTransaction.description,
+                amount: newTransaction.amount.toNumber(),
+                category: newTransaction.category,
+                type: "EXPENSE"
+            })
+        })
+        .catch(e => console.error(`Error occurred while posting record: ${e}`));
+
     }
 
     useEffect(() => {
@@ -46,7 +62,9 @@ export default function RecordsController(): JSX.Element {
                     }))
                 )
                 .catch(error => console.error(`Failed to fetch records: ${error}`));
-    });
+        },
+        []
+    );
 
     return (
         <>
