@@ -4,6 +4,7 @@ import com.dotwoffle.api.exceptions.MalformedQueryException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**This class represents an arbitrary query for filtering and sorting finance records from the database.*/
@@ -28,6 +29,8 @@ public class FinanceRecordQuery {
 
     private static final String AMOUNT_PARAM_NAME = "amount";
     private static final String DATE_PARAM_NAME = "date";
+    private static final String ALLOWED_TYPES_PARAM_NAME = "allowedTypes";
+    private static final String ALLOWED_CATEGORIES_PARAM_NAME = "allowedCategories";
     /**A lower bound on monetary amount.*/
     private BigDecimal lowerAmountBound = null;
     /**An upper bound on monetary amount.*/
@@ -46,11 +49,18 @@ public class FinanceRecordQuery {
 
     private void processQueryParam(String queryParam) throws MalformedQueryException {
 
-        if(queryParam.startsWith("a")) {
+        if(queryParam.startsWith(AMOUNT_PARAM_NAME)) {
             processAmountParam(queryParam);
         }
-        else if(queryParam.startsWith("d")) {
+        else if(queryParam.startsWith(DATE_PARAM_NAME)) {
             processDateParam(queryParam);
+        }
+        else if(queryParam.startsWith(ALLOWED_TYPES_PARAM_NAME))
+        {
+            processAllowedTypesParam(queryParam);
+        }
+        else if(queryParam.startsWith(ALLOWED_CATEGORIES_PARAM_NAME)) {
+            processAllowedCategoriesParam(queryParam);
         }
 
     }
@@ -171,6 +181,46 @@ public class FinanceRecordQuery {
         }
         else {
             throw new MalformedQueryException(DATE_PARAM_NAME, "Invalid operator in " + queryParam);
+        }
+
+    }
+
+    private void processAllowedTypesParam(String queryParam) throws MalformedQueryException {
+
+        if(allowedTypes != null) {
+            throw new MalformedQueryException(ALLOWED_TYPES_PARAM_NAME, "Query already specified allowed types list");
+        }
+
+        String queryParamCopy = queryParam.substring(1);
+        allowedTypes = new ArrayList<>();
+
+        for(String allowedType : queryParamCopy.split(",")) {
+            try {
+                allowedTypes.add(FinanceRecord.Type.valueOf(allowedType));
+            }
+            catch(IllegalArgumentException e) {
+                throw new MalformedQueryException(ALLOWED_TYPES_PARAM_NAME, allowedType + " is not a valid type");
+            }
+        }
+
+    }
+
+    private void processAllowedCategoriesParam(String queryParam) throws MalformedQueryException {
+
+        if(allowedCategories != null) {
+            throw new MalformedQueryException(ALLOWED_CATEGORIES_PARAM_NAME, "Query already specified allowed categories list");
+        }
+
+        String queryParamCopy = queryParam.substring(1);
+        allowedCategories = new ArrayList<>();
+
+        for(String allowedCategory : queryParamCopy.split(",")) {
+            try {
+                allowedCategories.add(FinanceRecord.Category.valueOf(allowedCategory));
+            }
+            catch(IllegalArgumentException e) {
+                throw new MalformedQueryException(ALLOWED_CATEGORIES_PARAM_NAME, allowedCategory + " is not a valid category");
+            }
         }
 
     }
