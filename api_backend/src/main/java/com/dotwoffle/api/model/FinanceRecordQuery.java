@@ -2,13 +2,9 @@ package com.dotwoffle.api.model;
 
 import com.dotwoffle.api.exceptions.MalformedQueryException;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAmount;
 import java.util.Collection;
-import java.util.Optional;
 
 /**This class represents an arbitrary query for filtering and sorting finance records from the database.*/
 public class FinanceRecordQuery {
@@ -33,17 +29,17 @@ public class FinanceRecordQuery {
     private static final String AMOUNT_PARAM_NAME = "amount";
     private static final String DATE_PARAM_NAME = "date";
     /**A lower bound on monetary amount.*/
-    private Optional<BigDecimal> lowerAmountBound = Optional.empty();
+    private BigDecimal lowerAmountBound = null;
     /**An upper bound on monetary amount.*/
-    private Optional<BigDecimal> upperAmountBound = Optional.empty();
+    private BigDecimal upperAmountBound = null;
     /**A lower bound on transaction date.*/
-    private Optional<LocalDate> lowerDateBound = Optional.empty();
+    private LocalDate lowerDateBound = null;
     /**An upper bound on transaction date.*/
-    private Optional<LocalDate> upperDateBound = Optional.empty();
+    private LocalDate upperDateBound = null;
     /**A list of transaction types that are allowed by the filter.*/
-    private Optional<Collection<FinanceRecord.Type>> allowedTypes = Optional.empty();
+    private Collection<FinanceRecord.Type> allowedTypes = null;
     /**A list of transaction categories that are allowed by the filter.*/
-    private Optional<Collection<FinanceRecord.Category>> allowedCategories = Optional.empty();
+    private Collection<FinanceRecord.Category> allowedCategories = null;
 
     /**Constructs a new empty query object.*/
     private FinanceRecordQuery() {}
@@ -65,7 +61,7 @@ public class FinanceRecordQuery {
 
         if(queryParamCopy.startsWith("<")) {
 
-            if(upperAmountBound.isPresent()) {
+            if(upperAmountBound != null) {
                 throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Query already specified upper bound for amount");
             }
 
@@ -73,24 +69,24 @@ public class FinanceRecordQuery {
 
             try {
                 if(queryParamCopy.startsWith("=")) {
-                    upperAmountBound = Optional.of(new BigDecimal(queryParamCopy.substring(1)));
+                    upperAmountBound = new BigDecimal(queryParamCopy.substring(1));
                 }
                 else {
-                    upperAmountBound = Optional.of(new BigDecimal(queryParamCopy).add(BigDecimal.valueOf(0.01)));
+                    upperAmountBound = new BigDecimal(queryParamCopy).add(BigDecimal.valueOf(0.01));
                 }
             }
             catch(NumberFormatException e) {
                 throw new MalformedQueryException(AMOUNT_PARAM_NAME, queryParamCopy + "is not a valid value for " + AMOUNT_PARAM_NAME);
             }
 
-            if(lowerAmountBound.isPresent() && lowerAmountBound.get().compareTo(upperAmountBound.get()) == 1) {
-                throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Upper bound for amount contradicts the previously set lower bound of " + lowerAmountBound.get());
+            if(lowerAmountBound != null && lowerAmountBound.compareTo(upperAmountBound) > 0) {
+                throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Upper bound for amount contradicts the previously set lower bound of " + lowerAmountBound);
             }
 
         }
         else if(queryParamCopy.startsWith(">")) {
 
-            if(lowerAmountBound.isPresent()) {
+            if(lowerAmountBound != null) {
                 throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Query already specified lower bound for amount");
             }
 
@@ -98,18 +94,18 @@ public class FinanceRecordQuery {
 
             try {
                 if(queryParamCopy.startsWith("=")) {
-                    lowerAmountBound = Optional.of(new BigDecimal(queryParamCopy.substring(1)));
+                    lowerAmountBound = new BigDecimal(queryParamCopy.substring(1));
                 }
                 else {
-                    lowerAmountBound = Optional.of(new BigDecimal(queryParamCopy).add(BigDecimal.valueOf(0.01)));
+                    lowerAmountBound = new BigDecimal(queryParamCopy).add(BigDecimal.valueOf(0.01));
                 }
             }
             catch(NumberFormatException e) {
                 throw new MalformedQueryException(AMOUNT_PARAM_NAME, queryParamCopy + "is not a valid value for " + AMOUNT_PARAM_NAME);
             }
 
-            if(upperAmountBound.isPresent() && upperAmountBound.get().compareTo(lowerAmountBound.get()) == 1) {
-                throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Lower bound for amount contradicts the previously set upper bound of " + lowerAmountBound.get());
+            if(upperAmountBound != null && upperAmountBound.compareTo(lowerAmountBound) > 0) {
+                throw new MalformedQueryException(AMOUNT_PARAM_NAME, "Lower bound for amount contradicts the previously set upper bound of " + lowerAmountBound);
             }
 
         }
@@ -125,7 +121,7 @@ public class FinanceRecordQuery {
 
         if(queryParamCopy.startsWith("<")) {
 
-            if(upperDateBound.isPresent()) {
+            if(upperDateBound != null) {
                 throw new MalformedQueryException(DATE_PARAM_NAME, "Query already specified upper bound for date");
             }
 
@@ -133,24 +129,24 @@ public class FinanceRecordQuery {
 
             try {
                 if(queryParamCopy.startsWith("=")) {
-                    upperDateBound = Optional.of(LocalDate.parse(queryParamCopy.substring(1)));
+                    upperDateBound = LocalDate.parse(queryParamCopy.substring(1));
                 }
                 else {
-                    upperDateBound = Optional.of(LocalDate.parse(queryParamCopy.substring(1)).minusDays(1));
+                    upperDateBound = LocalDate.parse(queryParamCopy.substring(1)).minusDays(1);
                 }
             }
             catch(NumberFormatException e) {
                 throw new MalformedQueryException(DATE_PARAM_NAME, queryParamCopy + "is not a valid value for " + DATE_PARAM_NAME);
             }
 
-            if(lowerDateBound.isPresent() && lowerDateBound.get().compareTo(upperDateBound.get()) == 1) {
-                throw new MalformedQueryException(DATE_PARAM_NAME, "Upper bound for date contradicts the previously set lower bound of " + lowerDateBound.get());
+            if(lowerDateBound != null && lowerDateBound.isAfter(upperDateBound)) {
+                throw new MalformedQueryException(DATE_PARAM_NAME, "Upper bound for date contradicts the previously set lower bound of " + lowerDateBound);
             }
 
         }
         else if(queryParamCopy.startsWith(">")) {
 
-            if(lowerDateBound.isPresent()) {
+            if(lowerDateBound != null) {
                 throw new MalformedQueryException(DATE_PARAM_NAME, "Query already specified lower bound for date");
             }
 
@@ -158,18 +154,18 @@ public class FinanceRecordQuery {
 
             try {
                 if(queryParamCopy.startsWith("=")) {
-                    lowerDateBound = Optional.of(LocalDate.parse(queryParamCopy.substring(1)));
+                    lowerDateBound = LocalDate.parse(queryParamCopy.substring(1));
                 }
                 else {
-                    lowerDateBound = Optional.of(LocalDate.parse(queryParamCopy.substring(1)).plusDays(1));
+                    lowerDateBound = LocalDate.parse(queryParamCopy.substring(1)).plusDays(1);
                 }
             }
             catch(NumberFormatException e) {
                 throw new MalformedQueryException(DATE_PARAM_NAME, queryParamCopy + "is not a valid value for " + DATE_PARAM_NAME);
             }
 
-            if(upperDateBound.isPresent() && upperDateBound.get().compareTo(upperDateBound.get()) == 1) {
-                throw new MalformedQueryException(DATE_PARAM_NAME, "Lower bound for date contradicts the previously set upper bound of " + lowerDateBound.get());
+            if(upperDateBound != null && upperDateBound.isBefore(lowerDateBound)) {
+                throw new MalformedQueryException(DATE_PARAM_NAME, "Lower bound for date contradicts the previously set upper bound of " + lowerDateBound);
             }
 
         }
