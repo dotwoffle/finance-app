@@ -1,0 +1,30 @@
+import FinanceRecord from "../model/FinanceRecord";
+
+interface FinanceRecordTableProps {
+    transactionList: FinanceRecord[];
+}
+
+export default function FinanceRecordTable({transactionList}: FinanceRecordTableProps): JSX.Element {
+    
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                {transactionList.map(record => <tr key={record.uuid}>
+                    <td>{record.date.toDateString()}</td>
+                    <td>{record.description}</td>
+                    <td>{`\$${record.amount.toDecimalPlaces(2).toString()}`}</td>
+                    <td>{record.category}</td>
+                </tr>)}
+            </tbody>
+        </table>
+    );
+
+}
