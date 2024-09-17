@@ -1,13 +1,13 @@
 export enum TransactionCategory {
-    FOOD = "food",
-    GROCERY = "grocery",
-    BILLS_AND_SUBSCRIPTIONS = "bills and subscriptions",
-    RENT = "rent",
-    PAYCHECK = "paycheck",
-    OTHER = "other"
+    FOOD = "Food",
+    GROCERY = "Grocery",
+    BILLS_AND_SUBSCRIPTIONS = "Bills and Subscriptions",
+    RENT = "Rent",
+    PAYCHECK = "Paycheck",
+    OTHER = "Other"
 }
 
 export enum TransactionType {
-    EXPENSE = "expense",
-    INCOME = "income"
+    EXPENSE = "Expense",
+    INCOME = "Income"
 }

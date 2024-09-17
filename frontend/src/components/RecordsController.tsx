@@ -40,7 +40,7 @@ export default function RecordsController(): JSX.Element {
                 description: newTransaction.description,
                 amount: newTransaction.amount.toNumber(),
                 category: newTransaction.category,
-                type: "EXPENSE"
+                type: newTransaction.type
             })
         })
         .catch(e => console.error(`Error occurred while posting record: ${e}`));
@@ -57,10 +57,10 @@ export default function RecordsController(): JSX.Element {
                         return {
                             uuid: record.uuid,
                             date: new Date(year, month-1, day),
-                            type: TransactionType[record.type as keyof typeof TransactionType],
+                            type: TransactionType[record.type.toUpperCase() as keyof typeof TransactionType],
                             description: record.description,
                             amount: new Decimal(record.amount),
-                            category: TransactionCategory[record.category as keyof typeof TransactionCategory]
+                            category: TransactionCategory[record.category.toUpperCase() as keyof typeof TransactionCategory]
                         };
 
                     }))
