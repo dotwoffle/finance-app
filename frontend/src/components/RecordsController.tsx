@@ -4,10 +4,12 @@ import FinanceRecordTable from "./FinanceRecordTable";
 import FinanceRecord from "../model/FinanceRecord";
 import MonthSummary from "./MonthSummary";
 import Decimal from "decimal.js";
+import { TransactionCategory, TransactionType } from "../model/Categories";
 
 interface ApiRecord {
     uuid: string,
     date: string,
+    type: string,
     description: string,
     amount: number,
     category: string
@@ -55,9 +57,10 @@ export default function RecordsController(): JSX.Element {
                         return {
                             uuid: record.uuid,
                             date: new Date(year, month-1, day),
+                            type: TransactionType[record.type as keyof typeof TransactionType],
                             description: record.description,
                             amount: new Decimal(record.amount),
-                            category: record.category
+                            category: TransactionCategory[record.category as keyof typeof TransactionCategory]
                         };
 
                     }))
