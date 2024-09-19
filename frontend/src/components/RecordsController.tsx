@@ -5,6 +5,7 @@ import FinanceRecord from "../model/FinanceRecord";
 import MonthSummary from "./MonthSummary";
 import Decimal from "decimal.js";
 import { TransactionCategory, TransactionType } from "../model/Categories";
+import ReactDatePicker from "react-datepicker";
 
 interface ApiRecord {
     uuid: string,
@@ -70,8 +71,17 @@ export default function RecordsController(): JSX.Element {
         []
     );
 
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
     return (
         <>
+            <ReactDatePicker
+                    selected={selectedDate}
+                    onChange={date => setSelectedDate(date)}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    placeholderText="Select Month and Year"
+            />
             <FinanceRecordCreator submitHandler={handleFormSubmit}/>
             <FinanceRecordTable transactionList={transactionList}/>
             <MonthSummary/>
