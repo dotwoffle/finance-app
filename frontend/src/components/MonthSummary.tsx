@@ -8,13 +8,19 @@ interface MonthSummaryProps {
 
 export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.Element {
 
-    const totalExpenses: Decimal = transactionList
-            .filter(record => record.type === TransactionType.EXPENSE)
+    const expenseList: FinanceRecord[] = transactionList.filter(record => record.type === TransactionType.EXPENSE)
+    const incomeList: FinanceRecord[] = transactionList.filter(record => record.type === TransactionType.INCOME)
+    const totalExpenses: Decimal = expenseList
             .reduce((currentTotal, record) => currentTotal.plus(record.amount), new Decimal(0));
-    const totalIncome: Decimal = transactionList
-            .filter(record => record.type === TransactionType.INCOME)
+    const totalIncome: Decimal = incomeList
             .reduce((currentTotal, record) => currentTotal.plus(record.amount), new Decimal(0));
     const totalProfit = totalIncome.minus(totalExpenses);
+    const averageDailyExpenses: Decimal = expenseList.length === 0 ?
+            new Decimal(0) :
+            totalExpenses.div(expenseList.length);
+    const averageDailyIncome: Decimal = incomeList.length === 0 ?
+            new Decimal(0) :
+            totalIncome.div(incomeList.length);
     const expensesPerCategory: Map<TransactionCategory, Decimal> = new Map();
     const incomePerCategory: Map<TransactionCategory, Decimal> = new Map();
 
@@ -41,6 +47,8 @@ export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.
             <p>Total expenses: ${totalExpenses.toString()}</p>
             <p>Total income: ${totalIncome.toString()}</p>
             <p>Total profit: ${totalProfit.toString()}</p>
+            <p>Average daily expenses: ${averageDailyExpenses.toString()}</p>
+            <p>Average daily income: ${averageDailyIncome.toString()}</p>
 
             <p>Total expenses per category:</p>
             <table>
@@ -63,7 +71,7 @@ export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.
                     <th>Total</th>
                 </thead>
                 <tbody>
-                    {incomeMapEntries.map(entry => <tr>
+                    {incomeMapEntries.map(entry => <tr key={entry[0]}>
                         <td>{entry[0]}</td>
                         <td>${entry[1].toString()}</td>
                     </tr>)}

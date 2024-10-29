@@ -122,7 +122,15 @@ export default function RecordsController(): JSX.Element {
                     placeholderText="Select Month and Year"
             />
             <FinanceRecordCreator submitHandler={handleFormSubmit}/>
-            <FinanceRecordTable transactionList={transactionList}/>
+            <h3>Expenses</h3>
+            <FinanceRecordTable
+                    transactionList={transactionList.filter(record => record.type === TransactionType.EXPENSE)}
+            />
+            <h3>Income</h3>
+            <FinanceRecordTable
+                    transactionList={transactionList.filter(record => record.type === TransactionType.INCOME)}
+            />
+            <h3>Summary</h3>
             <MonthSummary transactionList={transactionList}/>
         </>
     );
