@@ -1,12 +1,46 @@
-export default function MonthSummary(): JSX.Element {
+import Decimal from "decimal.js";
+import FinanceRecord from "../model/FinanceRecord";
+import { TransactionCategory, TransactionType } from "../model/Categories";
+
+interface MonthSummaryProps {
+    transactionList: FinanceRecord[];
+}
+
+export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.Element {
+
+    const totalExpenses: Decimal = transactionList
+            .filter(record => record.type === TransactionType.EXPENSE)
+            .reduce((currentTotal, record) => currentTotal.plus(record.amount), new Decimal(0));
+    const totalIncome: Decimal = transactionList
+            .filter(record => record.type === TransactionType.INCOME)
+            .reduce((currentTotal, record) => currentTotal.plus(record.amount), new Decimal(0));
+    const totalProfit = totalIncome.minus(totalExpenses);
+    const expensesPerCategory: Map<TransactionCategory, Decimal> = new Map();
+    const incomePerCategory: Map<TransactionCategory, Decimal> = new Map();
+
+    for(const record of transactionList) {
+        const mapToUse = record.type === TransactionType.EXPENSE ? expensesPerCategory : incomePerCategory;
+        mapToUse.set(record.category, (mapToUse.get(record.category) ?? new Decimal(0)).plus(record.amount));
+    }
+
+    let expensesMapEntries: [TransactionCategory, Decimal][] = [];
+    let incomeMapEntries: [TransactionCategory, Decimal][] = [];
+
+    for(const entry of expensesPerCategory.entries()) {
+        expensesMapEntries.push(entry);
+    }
+
+    for(const entry of incomePerCategory.entries()) {
+        incomeMapEntries.push(entry);
+    }
 
     return (
         
         <div>
 
-            <p>Total expenses: ${0.00}</p>
-            <p>Total income: ${0.00}</p>
-            <p>Total profit: ${0.00}</p>
+            <p>Total expenses: ${totalExpenses.toString()}</p>
+            <p>Total income: ${totalIncome.toString()}</p>
+            <p>Total profit: ${totalProfit.toString()}</p>
 
             <p>Total expenses per category:</p>
             <table>
@@ -15,7 +49,10 @@ export default function MonthSummary(): JSX.Element {
                     <th>Total</th>
                 </thead>
                 <tbody>
-
+                    {expensesMapEntries.map(entry => <tr>
+                        <td>{entry[0]}</td>
+                        <td>${entry[1].toString()}</td>
+                    </tr>)}
                 </tbody>
             </table>
 
@@ -26,7 +63,10 @@ export default function MonthSummary(): JSX.Element {
                     <th>Total</th>
                 </thead>
                 <tbody>
-                    
+                    {incomeMapEntries.map(entry => <tr>
+                        <td>{entry[0]}</td>
+                        <td>${entry[1].toString()}</td>
+                    </tr>)}
                 </tbody>
             </table>
 

@@ -85,9 +85,6 @@ export default function RecordsController(): JSX.Element {
 
                     }))
                 )
-                // .then((responseBody) => {
-                //     console.log(`Response body: ${responseBody}`)
-                // })
                 .catch(error => console.error(`Failed to fetch records: ${error}`));
 
     }
@@ -126,7 +123,7 @@ export default function RecordsController(): JSX.Element {
             />
             <FinanceRecordCreator submitHandler={handleFormSubmit}/>
             <FinanceRecordTable transactionList={transactionList}/>
-            <MonthSummary/>
+            <MonthSummary transactionList={transactionList}/>
         </>
     );
 
