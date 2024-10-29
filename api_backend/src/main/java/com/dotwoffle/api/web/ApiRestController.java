@@ -24,12 +24,12 @@ public class ApiRestController {
 
     private static Collection<FinanceRecord> loadFakeDatabase() {
 
-
         BufferedReader fileReader;
 
         try {
             fileReader = new BufferedReader(new FileReader(FAKE_DB_FILE_PATH));
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             System.err.println("Unable to load " + FAKE_DB_FILE_PATH);
             return Collections.emptyList();
         }
@@ -62,8 +62,6 @@ public class ApiRestController {
             @RequestParam(name="q", required=false) String queryString
     ) throws MalformedQueryException {
 
-        System.out.println("Query: " + queryString);
-
         if(queryString == null || queryString.isEmpty()) {
             return ResponseEntity.ok(FAKE_DATABASE);
         }
@@ -72,12 +70,17 @@ public class ApiRestController {
 
     }
 
+    /**Adds a finance record that was posted by the client to the database.
+     * @param financeRecord The deserialized {@link com.dotwoffle.api.model.FinanceRecord} object that was posted.*/
     @PostMapping("/api/create-record")
     private void postRecord(@RequestBody FinanceRecord financeRecord) {
         System.out.println(financeRecord);
         FAKE_DATABASE.add(financeRecord);
     }
 
+    /**Applies a query to the database to return a filtered list of finance records.
+     * @param query The query to apply.
+     * @return A filtered list of finance records matching the query.*/
     private List<FinanceRecord> applyQuery(FinanceRecordQuery query) {
 
         Stream<FinanceRecord> dbStream = FAKE_DATABASE.stream();
