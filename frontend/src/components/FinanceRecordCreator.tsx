@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import FinanceRecord from "../model/FinanceRecord";
 import Decimal from "decimal.js";
 import { v4 as createUuid } from 'uuid';
+import { TransactionCategory, TransactionType } from "../model/Categories";
 
 interface FinanceRecordCreatorProps {
     submitHandler: (newTransaction: FinanceRecord) => void
@@ -12,13 +13,16 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
     const [date, setDate] = useState<Date>(new Date());
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState<Decimal>(new Decimal(0));
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState<TransactionCategory>(TransactionCategory.OTHER);
+    const [type, setType] = useState<TransactionType>(TransactionType.EXPENSE);
     const dateInputRef = useRef<HTMLInputElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
     const amountInputRef = useRef<HTMLInputElement>(null);
     const categoryInputRef = useRef<HTMLInputElement>(null);
+    const typeInputRef = useRef<HTMLInputElement>(null);
 
     return (
+        
         <form onSubmit={(event) => {
 
             event.preventDefault();
@@ -35,10 +39,14 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
             if(categoryInputRef.current != null) {
                 categoryInputRef.current.value = "";
             }
+            if(typeInputRef.current != null) {
+                typeInputRef.current.value = "";
+            }
 
             submitHandler({
                 uuid: createUuid(),
                 date: date,
+                type: type,
                 description: description,
                 amount: amount,
                 category: category
@@ -52,6 +60,10 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
                     setDate(new Date(year, month-1, day));
                 }
             }/>
+            <label htmlFor="type">Type</label>
+            <input required ref={typeInputRef} type="text" name="type" id="type" onChange={
+                (event) => setType(TransactionType[event.target.value.toUpperCase() as keyof typeof TransactionType])
+            }/>
             <label htmlFor="description">Description</label>
             <input required ref={descriptionInputRef} type="text" name="description" id="description" onChange={
                 (event) => setDescription(event.target.value)
@@ -62,10 +74,13 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
             }/>
             <label htmlFor="category">Category</label>
             <input required ref={categoryInputRef} type="text" name="category" id="category" onChange={
-                (event) => setCategory(event.target.value)
+                (event) => setCategory(
+                        TransactionCategory[event.target.value.toUpperCase() as keyof typeof TransactionCategory]
+                )
             }/>
             <button type="submit">Add Record</button>
         </form>
+        
     );
 
 }
