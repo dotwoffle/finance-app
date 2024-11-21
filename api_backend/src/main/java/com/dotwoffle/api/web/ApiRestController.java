@@ -3,15 +3,27 @@ package com.dotwoffle.api.web;
 import com.dotwoffle.api.exceptions.MalformedQueryException;
 import com.dotwoffle.api.model.FinanceRecord;
 import com.dotwoffle.api.model.FinanceRecordQuery;
+import com.mysql.cj.jdbc.Driver;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +33,15 @@ public class ApiRestController {
 
     private static final String FAKE_DB_FILE_PATH = "src/main/resources/fake_records.csv";
     private final Collection<FinanceRecord> FAKE_DATABASE = loadFakeDatabase();
+    private final Connection DATABASE_CONNECTION;
+
+    public ApiRestController() throws SQLException {
+
+        DriverManager.registerDriver(new Driver());
+
+        this.DATABASE_CONNECTION = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
+
+    }
 
     private static Collection<FinanceRecord> loadFakeDatabase() {
 
@@ -74,7 +95,14 @@ public class ApiRestController {
      * @param financeRecord The deserialized {@link com.dotwoffle.api.model.FinanceRecord} object that was posted.*/
     @PostMapping("/api/create-record")
     private void postRecord(@RequestBody FinanceRecord financeRecord) {
-        System.out.println(financeRecord);
+
+        try {
+            Statement insertStatement = DATABASE_CONNECTION.createStatement();
+            insertStatement.execute("INSERT INTO test VALUES(13, 69);");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         FAKE_DATABASE.add(financeRecord);
     }
 
