@@ -95,8 +95,6 @@ public class ApiRestController {
     @PostMapping("/api/create-record")
     private void postRecord(@RequestBody FinanceRecord financeRecord) {
 
-        System.out.println("Got record with id" + financeRecord.id());
-
         try {
 
             PreparedStatement insertStatement = DATABASE_CONNECTION.prepareStatement("INSERT INTO finance_records(recordId, type, category, description, amount, date) VALUES(?, ?, ?, ?, ?, ?)");
@@ -163,8 +161,6 @@ public class ApiRestController {
             selectStatementSql += String.join(" AND ", whereClauses);
 
         }
-
-        System.out.println("Full query: " + selectStatementSql);
 
         try {
             Statement selectStatement = DATABASE_CONNECTION.createStatement();
