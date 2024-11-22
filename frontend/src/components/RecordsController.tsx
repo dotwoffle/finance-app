@@ -37,7 +37,7 @@ export default function RecordsController(): JSX.Element {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                uuid: newTransaction.uuid,
+                id: newTransaction.uuid,
                 date: newTransaction.date.toISOString(),
                 description: newTransaction.description,
                 amount: newTransaction.amount.toNumber(),
