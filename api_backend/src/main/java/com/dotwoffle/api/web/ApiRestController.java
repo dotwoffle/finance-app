@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -25,7 +22,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -35,8 +31,6 @@ import java.util.stream.Collectors;
 @RestController
 public class ApiRestController {
 
-    private static final String FAKE_DB_FILE_PATH = "src/main/resources/fake_records.csv";
-    private final Collection<FinanceRecord> FAKE_DATABASE = loadFakeDatabase();
     private final Connection DATABASE_CONNECTION;
 
     public ApiRestController() throws SQLException {
@@ -48,37 +42,6 @@ public class ApiRestController {
                 "financeapp",
                 "FinanceAppDev12345!"
         );
-
-    }
-
-    private static Collection<FinanceRecord> loadFakeDatabase() {
-
-        BufferedReader fileReader;
-
-        try {
-            fileReader = new BufferedReader(new FileReader(FAKE_DB_FILE_PATH));
-        }
-        catch (FileNotFoundException e) {
-            System.err.println("Unable to load " + FAKE_DB_FILE_PATH);
-            return Collections.emptyList();
-        }
-
-        return fileReader.lines()
-                .map(line -> {
-
-                    String[] recordParts = line.split(",");
-
-                    return new FinanceRecord(
-                            UUID.randomUUID(),
-                            FinanceRecord.Type.valueOf(recordParts[3]),
-                            new BigDecimal(recordParts[1]),
-                            LocalDate.parse(recordParts[0]),
-                            recordParts[2],
-                            FinanceRecord.Category.valueOf(recordParts[4])
-                    );
-
-                })
-                .collect(Collectors.toList());
 
     }
 
@@ -151,7 +114,6 @@ public class ApiRestController {
             throw new RuntimeException(e);
         }
 
-        FAKE_DATABASE.add(financeRecord);
     }
 
     /**Applies a query to the database to return a filtered list of finance records.
