@@ -53,6 +53,7 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
             });
 
         }}>
+
             <label htmlFor="date">Date</label>
             <input required ref={dateInputRef} type="date" name="date" id="date" onChange={
                 (event) => {
@@ -60,25 +61,41 @@ export default function FinanceRecordCreator({submitHandler}: FinanceRecordCreat
                     setDate(new Date(year, month-1, day));
                 }
             }/>
+
             <label htmlFor="type">Type</label>
-            <input required ref={typeInputRef} type="text" name="type" id="type" onChange={
-                (event) => setType(TransactionType[event.target.value.toUpperCase() as keyof typeof TransactionType])
-            }/>
-            <label htmlFor="description">Description</label>
-            <input required ref={descriptionInputRef} type="text" name="description" id="description" onChange={
-                (event) => setDescription(event.target.value)
-            }/>
+            <select required name="type" id="type" onChange={
+                (event) => {
+                    const enumValue: TransactionType = (Object.keys(TransactionType) as (keyof typeof TransactionType)[])
+                            .find((key) => TransactionType[key] === event.target.value) as TransactionType;
+                    setType(enumValue);
+                }
+            }>
+                {Object.values(TransactionType).map((type) => <option value={type}>{type}</option>)}
+            </select>
+
+            <label htmlFor="category">Category</label>
+            <select required name="category" id="category" onChange={
+                (event) => {
+                    const enumValue: TransactionCategory = (Object.keys(TransactionCategory) as (keyof typeof TransactionCategory)[])
+                            .find((key) => TransactionCategory[key] === event.target.value) as TransactionCategory;
+                    setCategory(enumValue);
+                }
+            }>
+                {Object.values(TransactionCategory).map((type) => <option value={type}>{type}</option>)}
+            </select>
+
             <label htmlFor="amount">Amount</label>
             <input required ref={amountInputRef} type="text" name="amount" id="amount" onChange={
                 (event) => setAmount(new Decimal(event.target.value))
             }/>
-            <label htmlFor="category">Category</label>
-            <input required ref={categoryInputRef} type="text" name="category" id="category" onChange={
-                (event) => setCategory(
-                        TransactionCategory[event.target.value.toUpperCase() as keyof typeof TransactionCategory]
-                )
+
+            <label htmlFor="description">Description</label>
+            <input required ref={descriptionInputRef} type="text" name="description" id="description" onChange={
+                (event) => setDescription(event.target.value)
             }/>
+
             <button type="submit">Add Record</button>
+
         </form>
         
     );

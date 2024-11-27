@@ -91,29 +91,6 @@ export default function RecordsController(): JSX.Element {
 
     useEffect(() => fetchRecordsForMonth(selectedDate));
 
-    // useEffect(() => {
-    //     fetch(`${API_ENDPOINT}/get-records`)
-    //             .then(response => response.json())
-    //             .then(responseBody => setTransactionList((responseBody as ApiRecord[]).map(record => {
-
-    //                     const [year, month, day] = record.date.split("-").map(Number);
-
-    //                     return {
-    //                         uuid: record.uuid,
-    //                         date: new Date(year, month-1, day),
-    //                         type: TransactionType[record.type.toUpperCase() as keyof typeof TransactionType],
-    //                         description: record.description,
-    //                         amount: new Decimal(record.amount),
-    //                         category: TransactionCategory[record.category.toUpperCase() as keyof typeof TransactionCategory]
-    //                     };
-
-    //                 }))
-    //             )
-    //             .catch(error => console.error(`Failed to fetch records: ${error}`));
-    //     },
-    //     []
-    // );
-
     return (
         <>
             <ReactDatePicker
