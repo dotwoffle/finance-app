@@ -44,11 +44,11 @@ export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.
         
         <div>
 
-            <p>Total expenses: ${totalExpenses.toString()}</p>
-            <p>Total income: ${totalIncome.toString()}</p>
-            <p>Total profit: ${totalProfit.toString()}</p>
-            <p>Average daily expenses: ${averageDailyExpenses.toString()}</p>
-            <p>Average daily income: ${averageDailyIncome.toString()}</p>
+            <p>Total expenses: ${totalExpenses.toFixed(2).toString()}</p>
+            <p>Total income: ${totalIncome.toFixed(2).toString()}</p>
+            <p>Total profit: ${totalProfit.toFixed(2).toString()}</p>
+            <p>Average daily expenses: ${averageDailyExpenses.toFixed(2).toString()}</p>
+            <p>Average daily income: ${averageDailyIncome.toFixed(2).toString()}</p>
 
             <p>Total expenses per category:</p>
             <table>
@@ -59,7 +59,7 @@ export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.
                 <tbody>
                     {expensesMapEntries.map(entry => <tr>
                         <td>{entry[0]}</td>
-                        <td>${entry[1].toString()}</td>
+                        <td>${entry[1].toFixed(2).toString()}</td>
                     </tr>)}
                 </tbody>
             </table>
@@ -73,7 +73,7 @@ export default function MonthSummary({transactionList}: MonthSummaryProps): JSX.
                 <tbody>
                     {incomeMapEntries.map(entry => <tr key={entry[0]}>
                         <td>{entry[0]}</td>
-                        <td>${entry[1].toString()}</td>
+                        <td>${entry[1].toFixed(2).toString()}</td>
                     </tr>)}
                 </tbody>
             </table>
