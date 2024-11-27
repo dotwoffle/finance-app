@@ -21,7 +21,7 @@ const API_ENDPOINT = "http://localhost:8080/api";
 export default function RecordsController(): JSX.Element {
 
     const [transactionList, setTransactionList] = useState<FinanceRecord[]>([]);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
     const handleFormSubmit: ((newTransaction: FinanceRecord) => void) = (newTransaction) => {
 
@@ -89,28 +89,30 @@ export default function RecordsController(): JSX.Element {
 
     }
 
-    useEffect(() => {
-        fetch(`${API_ENDPOINT}/get-records`)
-                .then(response => response.json())
-                .then(responseBody => setTransactionList((responseBody as ApiRecord[]).map(record => {
+    useEffect(() => fetchRecordsForMonth(selectedDate));
 
-                        const [year, month, day] = record.date.split("-").map(Number);
+    // useEffect(() => {
+    //     fetch(`${API_ENDPOINT}/get-records`)
+    //             .then(response => response.json())
+    //             .then(responseBody => setTransactionList((responseBody as ApiRecord[]).map(record => {
 
-                        return {
-                            uuid: record.uuid,
-                            date: new Date(year, month-1, day),
-                            type: TransactionType[record.type.toUpperCase() as keyof typeof TransactionType],
-                            description: record.description,
-                            amount: new Decimal(record.amount),
-                            category: TransactionCategory[record.category.toUpperCase() as keyof typeof TransactionCategory]
-                        };
+    //                     const [year, month, day] = record.date.split("-").map(Number);
 
-                    }))
-                )
-                .catch(error => console.error(`Failed to fetch records: ${error}`));
-        },
-        []
-    );
+    //                     return {
+    //                         uuid: record.uuid,
+    //                         date: new Date(year, month-1, day),
+    //                         type: TransactionType[record.type.toUpperCase() as keyof typeof TransactionType],
+    //                         description: record.description,
+    //                         amount: new Decimal(record.amount),
+    //                         category: TransactionCategory[record.category.toUpperCase() as keyof typeof TransactionCategory]
+    //                     };
+
+    //                 }))
+    //             )
+    //             .catch(error => console.error(`Failed to fetch records: ${error}`));
+    //     },
+    //     []
+    // );
 
     return (
         <>
