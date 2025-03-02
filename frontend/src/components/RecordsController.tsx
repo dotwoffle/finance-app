@@ -89,7 +89,7 @@ export default function RecordsController(): JSX.Element {
 
     }
 
-    useEffect(() => fetchRecordsForMonth(selectedDate));
+    useEffect(() => fetchRecordsForMonth(selectedDate), [selectedDate]);
 
     return (
         <>
