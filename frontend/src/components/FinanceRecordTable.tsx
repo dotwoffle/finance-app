@@ -10,6 +10,7 @@ export default function FinanceRecordTable({transactionList}: FinanceRecordTable
         <table>
             <thead>
                 <tr>
+                    <th/>
                     <th>Date</th>
                     <th>Description</th>
                     <th>Amount</th>
@@ -18,6 +19,9 @@ export default function FinanceRecordTable({transactionList}: FinanceRecordTable
             </thead>
             <tbody>
                 {transactionList.map(record => <tr key={record.uuid}>
+                    <td>
+                        <input type="checkbox" id={`recordSelect${record.uuid}`}/>
+                    </td>
                     <td>{record.date.toDateString()}</td>
                     <td>{record.description}</td>
                     <td>{`\$${record.amount.toFixed(2).toString()}`}</td>
