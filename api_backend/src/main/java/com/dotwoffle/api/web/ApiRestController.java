@@ -7,6 +7,7 @@ import com.mysql.cj.jdbc.Driver;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,6 +110,42 @@ public class ApiRestController {
             insertStatement.execute();
 
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**Updates an existing finance record in the database with new fields.
+     * @param financeRecord The record to be updated. Records are matched by UUID. Any fields in the record that differ
+     * from the database will be updated in the database.*/
+    @PutMapping("/api/update-record")
+    private ResponseEntity<FinanceRecord> updateRecord(@RequestBody FinanceRecord financeRecord) {
+
+        try {
+
+            PreparedStatement updateStatement = DATABASE_CONNECTION.prepareStatement("UPDATE finance_records SET type = ?, category = ?, description = ?, amount = ?, date = ? WHERE recordId = ?");
+
+            updateStatement.setString(1, financeRecord.type().toString());
+            updateStatement.setString(2, financeRecord.category().toString());
+            updateStatement.setString(3, financeRecord.description());
+            updateStatement.setBigDecimal(4, financeRecord.amount());
+            updateStatement.setDate(5, Date.valueOf(financeRecord.date()));
+            updateStatement.setString(6, financeRecord.id().toString());
+
+            int rowsAffected = updateStatement.executeUpdate();
+
+            if(rowsAffected == 0) {
+                return ResponseEntity.notFound().build();
+            }
+            else if(rowsAffected > 1)
+            {
+                throw new RuntimeException("Expected to only update one row but updated " + rowsAffected);
+            }
+
+            return ResponseEntity.ok(financeRecord); //TODO I think this should probably return 204 instead
+
+        }
+        catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
