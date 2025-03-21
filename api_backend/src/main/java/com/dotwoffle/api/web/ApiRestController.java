@@ -5,6 +5,7 @@ import com.dotwoffle.api.model.FinanceRecord;
 import com.dotwoffle.api.model.FinanceRecordQuery;
 import com.mysql.cj.jdbc.Driver;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -146,6 +148,46 @@ public class ApiRestController {
 
         }
         catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**Deletes a single record from the database.
+     * @param requestBody The JSON request body. This is expected to be a JSON object with a single field "id" that
+     * contains a valid UUIDv4.*/
+    @DeleteMapping("/api/delete-record")
+    private void deleteRecord(@RequestBody Map<String, Object> requestBody) {
+
+        if(!requestBody.containsKey("id")) {
+            throw new RuntimeException("Missing \"id\" field in request body");
+        }
+
+        UUID uuidToDelete;
+
+        if(requestBody.get("id") instanceof String id) {
+            uuidToDelete = UUID.fromString(id); //for UUID validation
+        }
+        else {
+            throw new RuntimeException("\"id\" must be a valid UUIDv4");
+        }
+
+        try {
+
+            PreparedStatement deleteStatement = DATABASE_CONNECTION.prepareStatement("DELETE FROM finance_records WHERE recordId = ?");
+
+            deleteStatement.setString(1, uuidToDelete.toString());
+            int rowsAffected = deleteStatement.executeUpdate();
+
+            if(rowsAffected == 0) {
+                throw new RuntimeException("Record not found"); //404
+            }
+            else if(rowsAffected > 1)
+            {
+                throw new RuntimeException("Expected to only update one row but updated " + rowsAffected);
+            }
+
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
